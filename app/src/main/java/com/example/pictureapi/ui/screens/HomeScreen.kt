@@ -1,5 +1,7 @@
 package com.example.pictureapi.ui.screens
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +37,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.example.pictureapi.FullScreenActivity
+
 val paddingVal = 0.dp
 val cardPadding = 4.dp
 val cardElevation = 8.dp
@@ -49,6 +53,7 @@ fun HomeScreen(
     contentPadding: PaddingValues = PaddingValues(paddingVal),
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
+    var showFullScreen by rememberSaveable { mutableStateOf(false) }
     var selectedPosition by rememberSaveable { mutableStateOf(0) }
 
     when (photoUiState) {
@@ -62,7 +67,7 @@ fun HomeScreen(
                     contentPadding = contentPadding,
                     onGifClick = {position ->
                         selectedPosition = position+1
-                        showDialog = true
+                        showFullScreen = true
                     }
                 )
                 if (showDialog && (selectedPosition != 0)) {
@@ -108,11 +113,16 @@ fun PhotoCard(
     photo: GifData,
     position: Int,
     modifier: Modifier = Modifier,
+    context: Context,
     onClick: () -> Unit = {}
 ) {
     Card (
         modifier = modifier
-            .clickable(onClick = onClick),
+            .clickable(onClick = {
+                val intent = Intent(context, FullScreenActivity::class.java)
+                intent.putExtra("url", photo.images.original.url)
+                context.startActivity(intent)
+            }),
         elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
     ) {
         AsyncImage(
@@ -155,6 +165,7 @@ fun PhotosGridScreen(
                 modifier = modifier
                     .padding(cardPadding)
                     .fillMaxWidth(),
+                context = LocalContext.current,
                 onClick = { onGifClick(index) }
             )
         }

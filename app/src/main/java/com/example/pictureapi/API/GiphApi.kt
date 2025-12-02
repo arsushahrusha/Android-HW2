@@ -8,6 +8,5 @@ interface GiphApi {
     suspend fun getPhotos(
         @Query("api_key") apiKey: String = "kgxnfPUL36RHC426TgCXtE9ERHT1hi2x",
         @Query("q") q: String = "cat",
-
         ): GiphResponse
 }
